@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOT POTATO · REVENUE INDEX</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #09090E;
+  --bg2:    #101018;
+  --bg3:    #161622;
+  --bg4:    #1C1C2C;
+  --border: #252535;
+  --border2:#1A1A28;
+  --text:   #EEEEF8;
+  --text2:  #8888AA;
+  --text3:  #44445A;
+  --amber:  #F5A623;
+  --amber2: #7A5110;
+  --green:  #3DDB72;
+  --green2: #0D3A1E;
+  --red:    #E85050;
+  --red2:   #3A0D0D;
+  --blue:   #6B9FFF;
+  --purple: #B07AFF;
+  --teal:   #3DCFCF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 16px 20px 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--amber2);
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 120px;
+  height: 1px;
+  background: var(--amber);
+}
+.header-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 38px;
+  letter-spacing: 4px;
+  color: var(--amber);
+  line-height: 1;
+}
+.header-badge {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-left: 12px;
+  vertical-align: middle;
+  position: relative;
+  top: -6px;
+}
+.header-right {
+  text-align: right;
+}
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-bottom: 3px;
+}
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(61,219,114,0.4); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(61,219,114,0); }
+}
+.live-clock {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text2);
+  letter-spacing: 2px;
+}
+.header-meta {
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 1.5px;
+}
+
+/* ─── LAYOUT ─── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lower-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* ─── PANELS ─── */
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.panel-header {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 10px;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: var(--text3);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.panel-header .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--amber);
+  flex-shrink: 0;
+}
+.panel-body {
+  padding: 12px;
+}
+
+/* ─── SECTION TITLE ─── */
+.sec-title {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 10px;
+}
+
+/* ─── INPUTS ─── */
+.input-group {
+  margin-bottom: 14px;
+}
+.input-group:last-child { margin-bottom: 0; }
+
+.input-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 5px;
+}
+.input-lbl {
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.input-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 1px;
+  font-family: 'Bebas Neue', cursive;
+}
+
+input[type=range] {
+  width: 100%;
+  appearance: none;
+  height: 1px;
+  background: var(--border);
+  outline: none;
+  border-radius: 1px;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--bg);
+  border: 2px solid var(--amber);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input[type=range]:hover::-webkit-slider-thumb,
+input[type=range]:active::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(245,166,35,0.2);
+  background: var(--amber);
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--amber2), var(--border));
+  border-radius: 1px;
+}
+
+/* ─── TOP 4 METRICS ─── */
+.top-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border2);
+}
+.top-metric {
+  background: var(--bg2);
+  padding: 14px 14px 12px;
+}
+.tm-label {
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+.tm-val {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  transition: color 0.2s;
+}
+.tm-sub {
+  font-size: 9px;
+  color: var(--text3);
+  margin-bottom: 5px;
+}
+.tag {
+  display: inline-block;
+  font-size: 8px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+.tag-g { background: var(--green2); color: var(--green); }
+.tag-r { background: var(--red2);   color: var(--red);   }
+.tag-a { background: rgba(245,166,35,0.12); color: var(--amber); }
+.tag-b { background: rgba(107,159,255,0.12); color: var(--blue); }
+
+/* ─── 6 SECONDARY METRICS ─── */
+.sec-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  background: var(--border2);
+}
+.sec-metric {
+  background: var(--bg2);
+  padding: 10px 12px;
+}
+.sm-label {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 5px;
+}
+.sm-val {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 18px;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--text);
+}
+.sm-sub {
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 3px;
+}
+
+/* ─── BARS ─── */
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+.bar-row:last-child { margin-bottom: 0; }
+.bar-lbl {
+  font-size: 9px;
+  color: var(--text2);
+  width: 140px;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+.bar-track {
+  flex: 1;
+  height: 14px;
+  background: var(--bg4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 9px;
+  font-weight: 700;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  min-width: 2px;
+}
+.bar-amt {
+  font-size: 10px;
+  color: var(--text2);
+  width: 72px;
+  text-align: right;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+/* ─── TIER ANALYSIS ─── */
+.tier-table { width: 100%; border-collapse: collapse; }
+.tier-table th {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 8px;
+  text-align: right;
+}
+.tier-table th:first-child { text-align: left; }
+.tier-table td {
+  padding: 6px 8px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border2);
+  text-align: right;
+  color: var(--text2);
+}
+.tier-table td:first-child { text-align: left; }
+.tier-table tr:last-child td { border-bottom: none; background: var(--bg3); color: var(--text); font-weight: 600; }
+
+/* ─── KEYS MINI-GRID ─── */
+.keys-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--bg3);
+}
+.keys-item .k-label { font-size: 8px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+.keys-item .k-val { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 1px; line-height: 1; }
+
+/* ─── MONTHLY TABLE ─── */
+.month-table { width: 100%; border-collapse: collapse; }
+.month-table th {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+  padding: 4px 6px;
+  text-align: right;
+}
+.month-table th:first-child { text-align: left; }
+.month-table td {
+  padding: 4px 6px;
+  font-size: 10px;
+  border-bottom: 1px solid var(--border2);
+  text-align: right;
+  color: var(--text3);
+}
+.month-table td:first-child { text-align: left; color: var(--text2); font-size: 9px; }
+.month-table td.num { color: var(--text2); }
+.month-table td.pos { color: var(--green); }
+.month-table tr.be-row td { background: rgba(245,166,35,0.06); }
+.month-table tr.be-row td:first-child { color: var(--amber); }
+
+/* ─── SENSITIVITY ─── */
+.sens-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.sens-table th {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--text3);
+  padding: 4px 4px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.sens-table th:first-child { text-align: left; }
+.sens-table td {
+  padding: 5px 4px;
+  text-align: center;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.s-pos { color: var(--green); background: rgba(61,219,114,0.07); }
+.s-neg { color: var(--red);   background: rgba(232,80,80,0.07);  }
+.s-zero { color: var(--amber); background: rgba(245,166,35,0.07); }
+.s-cur  { outline: 2px solid var(--amber); outline-offset: -2px; }
+
+/* ─── 3-YEAR CARDS ─── */
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border2);
+  margin-bottom: 12px;
+}
+.year-card {
+  background: var(--bg2);
+  padding: 14px 16px;
+}
+.yc-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.yc-rev {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 36px;
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-bottom: 6px;
+  transition: color 0.2s;
+}
+.yc-details { font-size: 9px; color: var(--text3); line-height: 1.9; }
+.yc-details .hl { color: var(--text2); }
+.cum-bar { height: 2px; background: var(--border); border-radius: 1px; margin-top: 10px; }
+.cum-fill { height: 100%; border-radius: 1px; background: var(--amber); transition: width 0.4s ease; }
+
+/* ─── INSIGHT ─── */
+.insight {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  padding: 12px 16px;
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--text2);
+  border-radius: 3px;
+}
+.insight strong { color: var(--text); }
+
+/* ─── ROI 3Y BOX ─── */
+.roi3-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.roi3-item .ri-label { font-size: 8px; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+.roi3-item .ri-val { font-family: 'Bebas Neue', cursive; font-size: 20px; letter-spacing: 1px; }
+
+/* ─── COLORS ─── */
+.c-green  { color: var(--green); }
+.c-red    { color: var(--red); }
+.c-amber  { color: var(--amber); }
+.c-blue   { color: var(--blue); }
+.c-purple { color: var(--purple); }
+.c-teal   { color: var(--teal); }
+.c-text   { color: var(--text); }
+.c-text2  { color: var(--text2); }
+
+/* ─── MINI SECTION DIVIDER ─── */
+.mini-divider {
+  font-size: 8px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  padding: 6px 0 4px;
+  border-top: 1px solid var(--border2);
+  margin: 10px 0 8px;
+}
+
+/* ─── NUMBER INPUTS ─── */
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.price-item { display: flex; flex-direction: column; gap: 4px; }
+.price-item label {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+.price-input {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--amber);
+  font-family: 'Bebas Neue', cursive;
+  font-size: 20px;
+  letter-spacing: 1px;
+  padding: 6px 8px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.price-input::-webkit-outer-spin-button,
+.price-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.price-input:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 2px rgba(245,166,35,0.15);
+}
+.price-input:hover { border-color: var(--amber2); }
+.price-hint {
+  font-size: 8px;
+  color: var(--text3);
+  text-align: center;
+  margin-top: 2px;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ HEADER ════════════════════ -->
+<div class="header">
+  <div>
+    <div class="header-title">HOT POTATO <span style="font-size:22px;color:var(--text3);letter-spacing:2px;">·</span> REVENUE INDEX</div>
+    <span class="header-badge">STEAM · CALCULADORA FINANCIERA v2.0</span>
+  </div>
+  <div class="header-right">
+    <div class="live-indicator">
+      <span class="live-dot"></span>
+      <span class="live-clock" id="live-clock">--:--:--</span>
+    </div>
+    <div class="header-meta">STEAM DESCUENTO 30% · IVA INCLUIDO EN PRECIO DE VENTA · REACTIVO EN TIEMPO REAL</div>
+  </div>
+</div>
+
+<!-- ════════════════════ MAIN GRID ════════════════════ -->
+<div class="main-grid">
+
+  <!-- ── INPUTS ── -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>PARÁMETROS DE ENTRADA</div>
+    <div class="panel-body">
+
+      <div class="sec-title">PRECIOS Y PLATAFORMA</div>
+
+      <div class="price-grid">
+        <div class="price-item">
+          <label>PRECIO T1</label>
+          <input type="number" class="price-input" id="p1-in" value="4.99" min="0.1" max="999" step="0.01">
+          <div class="price-hint">Pack solo</div>
+        </div>
+        <div class="price-item">
+          <label>PRECIO T2</label>
+          <input type="number" class="price-input" id="p2-in" value="9.99" min="0.1" max="999" step="0.01">
+          <div class="price-hint">+ Keys</div>
+        </div>
+        <div class="price-item">
+          <label>STEAM CUT</label>
+          <input type="number" class="price-input" id="steam-in" value="30" min="0" max="100" step="1" style="color:var(--red);">
+          <div class="price-hint">% plataforma</div>
+        </div>
+      </div>
+
+      <!-- Live price preview -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;padding:8px;background:var(--bg4);border-radius:3px;border:1px solid var(--border2);">
+        <div>
+          <div style="font-size:8px;color:var(--text3);letter-spacing:1px;margin-bottom:2px;">T1 NETO / UD</div>
+          <div style="font-family:'Bebas Neue';font-size:16px;color:var(--blue);" id="p1-net-preview">—</div>
+        </div>
+        <div>
+          <div style="font-size:8px;color:var(--text3);letter-spacing:1px;margin-bottom:2px;">T2 NETO / UD</div>
+          <div style="font-family:'Bebas Neue';font-size:16px;color:var(--green);" id="p2-net-preview">—</div>
+        </div>
+      </div>
+
+      <div class="sec-title">INVERSIÓN</div>
+
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">INVERSIÓN INICIAL</span>
+          <span class="input-val" id="invest-out">32.500€</span>
+        </div>
+        <input type="range" min="10000" max="100000" step="500" value="32500" id="invest">
+      </div>
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">MARKETING ADICIONAL</span>
+          <span class="input-val" id="mkt-out">5.000€</span>
+        </div>
+        <input type="range" min="0" max="30000" step="500" value="5000" id="mkt">
+      </div>
+
+      <div class="sec-title" style="margin-top:14px;">MIX DE PRODUCTO</div>
+
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">% PACK 9.99€ + KEYS</span>
+          <span class="input-val" id="mix-out">40%</span>
+        </div>
+        <input type="range" min="0" max="100" step="5" value="40" id="mixPct">
+      </div>
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">KEYS POR PACK T2</span>
+          <span class="input-val" id="keys-out">3</span>
+        </div>
+        <input type="range" min="1" max="10" step="1" value="3" id="keysPerPack">
+      </div>
+
+      <div class="sec-title" style="margin-top:14px;">VOLUMEN DE VENTAS</div>
+
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">UNIDADES AÑO 1</span>
+          <span class="input-val" id="units1-out">8.000</span>
+        </div>
+        <input type="range" min="500" max="50000" step="500" value="8000" id="units1">
+      </div>
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">CRECIMIENTO AÑO 2</span>
+          <span class="input-val" id="g2-out">60%</span>
+        </div>
+        <input type="range" min="0" max="200" step="5" value="60" id="g2">
+      </div>
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">CRECIMIENTO AÑO 3</span>
+          <span class="input-val" id="g3-out">50%</span>
+        </div>
+        <input type="range" min="0" max="200" step="5" value="50" id="g3">
+      </div>
+
+      <div class="sec-title" style="margin-top:14px;">DESCUENTOS Y REEMBOLSOS</div>
+
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">DESCUENTO EN SALES</span>
+          <span class="input-val" id="saleDisc-out">30%</span>
+        </div>
+        <input type="range" min="0" max="75" step="5" value="30" id="saleDisc">
+      </div>
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">% VENTAS EN SALE</span>
+          <span class="input-val" id="salePct-out">25%</span>
+        </div>
+        <input type="range" min="0" max="80" step="5" value="25" id="salePct">
+      </div>
+      <div class="input-group">
+        <div class="input-label-row">
+          <span class="input-lbl">TASA DE REEMBOLSO</span>
+          <span class="input-val" id="refund-out">3%</span>
+        </div>
+        <input type="range" min="0" max="20" step="1" value="3" id="refund">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── RIGHT COLUMN ── -->
+  <div class="right-col">
+
+    <!-- TOP 4 METRICS -->
+    <div>
+      <div class="sec-title">MÉTRICAS CLAVE AÑO 1</div>
+      <div class="top-metrics">
+        <div class="top-metric">
+          <div class="tm-label">INGRESO NETO AÑO 1</div>
+          <div class="tm-val" id="netRev-val">—</div>
+          <div class="tm-sub">después de Steam + reembolsos</div>
+        </div>
+        <div class="top-metric">
+          <div class="tm-label">EBITDA AÑO 1</div>
+          <div class="tm-val" id="ebitda-val">—</div>
+          <div class="tm-sub" id="ebitda-sub">vs inversión total</div>
+          <div id="ebitda-tag" class="tag">—</div>
+        </div>
+        <div class="top-metric">
+          <div class="tm-label">ROI AÑO 1</div>
+          <div class="tm-val" id="roi-val">—</div>
+          <div class="tm-sub">retorno sobre inversión total</div>
+        </div>
+        <div class="top-metric">
+          <div class="tm-label">BREAK-EVEN UNITS</div>
+          <div class="tm-val" id="be-val">—</div>
+          <div class="tm-sub" id="be-sub">para recuperar inversión</div>
+          <div id="be-tag" class="tag">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 SECONDARY METRICS -->
+    <div>
+      <div class="sec-title">MÉTRICAS OPERATIVAS</div>
+      <div class="sec-metrics">
+        <div class="sec-metric">
+          <div class="sm-label">ARPU NETO</div>
+          <div class="sm-val c-amber" id="arpu-val">—</div>
+          <div class="sm-sub">por unidad vendida</div>
+        </div>
+        <div class="sec-metric">
+          <div class="sm-label">REVENUE BRUTO</div>
+          <div class="sm-val" id="grossRev-val">—</div>
+          <div class="sm-sub">antes de Steam</div>
+        </div>
+        <div class="sec-metric">
+          <div class="sm-label">PÉRDIDA REEMBOLSOS</div>
+          <div class="sm-val c-red" id="refundLoss-val">—</div>
+          <div class="sm-sub">revenue perdido</div>
+        </div>
+        <div class="sec-metric">
+          <div class="sm-label">PÉRDIDA SALES</div>
+          <div class="sm-val c-red" id="saleLoss-val">—</div>
+          <div class="sm-sub">descuento aplicado neto</div>
+        </div>
+        <div class="sec-metric">
+          <div class="sm-label">JUGADORES TOTALES</div>
+          <div class="sm-val c-purple" id="players-val">—</div>
+          <div class="sm-sub">compradores + keys</div>
+        </div>
+        <div class="sec-metric">
+          <div class="sm-label">COSTE/JUGADOR</div>
+          <div class="sm-val c-teal" id="cpp-val">—</div>
+          <div class="sm-sub">inversión ÷ jugadores</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE BARS -->
+    <div class="panel">
+      <div class="panel-header"><span class="dot"></span>DESGLOSE VISUAL INGRESOS AÑO 1</div>
+      <div class="panel-body">
+        <div class="bar-row">
+          <div class="bar-lbl">Pack solo 4.99€ (Tier 1)</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-t1" style="background:#6B9FFF;color:#06162E;"></div></div>
+          <div class="bar-amt c-blue" id="bar-t1-amt">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-lbl">Pack 9.99€ + Keys (Tier 2)</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-t2" style="background:#3DDB72;color:#04180E;"></div></div>
+          <div class="bar-amt c-green" id="bar-t2-amt">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-lbl">Inversión total (develop+mkt)</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-cost" style="background:#E85050;color:#fff;"></div></div>
+          <div class="bar-amt c-red" id="bar-cost-amt">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-lbl">Steam cut (30%)</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-steam" style="background:#4A3D6B;color:#C0AAFF;"></div></div>
+          <div class="bar-amt" style="color:#8877BB;" id="bar-steam-amt">—</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-lbl">EBITDA resultante</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-ebitda"></div></div>
+          <div class="bar-amt" id="bar-ebitda-amt">—</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /right-col -->
+</div><!-- /main-grid -->
+
+<!-- ════════════════════ LOWER 3-COL ════════════════════ -->
+<div class="lower-grid">
+
+  <!-- ── TIER ANALYSIS ── -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>ANÁLISIS POR TIER</div>
+    <div class="panel-body" style="padding:0;">
+      <table class="tier-table">
+        <thead>
+          <tr>
+            <th>TIER</th>
+            <th>PRECIO EFF.</th>
+            <th>UNITS</th>
+            <th>GROSS</th>
+            <th>NETO</th>
+            <th>% REV</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="t1-row">
+            <td style="color:var(--blue);font-weight:700;">4.99€ SOLO</td>
+            <td id="t1-price" class="c-blue">—</td>
+            <td id="t1-units">—</td>
+            <td id="t1-gross">—</td>
+            <td id="t1-net">—</td>
+            <td id="t1-pct">—</td>
+          </tr>
+          <tr id="t2-row">
+            <td style="color:var(--green);font-weight:700;">9.99€ + KEYS</td>
+            <td id="t2-price" class="c-green">—</td>
+            <td id="t2-units">—</td>
+            <td id="t2-gross">—</td>
+            <td id="t2-net">—</td>
+            <td id="t2-pct">—</td>
+          </tr>
+          <tr>
+            <td>TOTAL</td>
+            <td id="tot-avgprice">—</td>
+            <td id="tot-units">—</td>
+            <td id="tot-gross">—</td>
+            <td id="tot-net">—</td>
+            <td style="color:var(--text3);">100%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- KEYS IMPACT -->
+    <div class="keys-grid">
+      <div class="keys-item">
+        <div class="k-label">KEYS GENERADAS</div>
+        <div class="k-val c-purple" id="keys-gen">—</div>
+      </div>
+      <div class="keys-item">
+        <div class="k-label">VIRAL COEFFICIENT</div>
+        <div class="k-val c-purple" id="viral-coeff">—</div>
+      </div>
+      <div class="keys-item">
+        <div class="k-label">JUGADORES EXTRA</div>
+        <div class="k-val c-amber" id="extra-players">—</div>
+      </div>
+      <div class="keys-item">
+        <div class="k-label">COSTE EFECTIVO/KEY</div>
+        <div class="k-val c-amber" id="cost-per-key">—</div>
+      </div>
+    </div>
+    <!-- TIER DELTA -->
+    <div style="padding:10px 12px; border-top:1px solid var(--border); background:var(--bg3);">
+      <div style="font-size:8px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;">VENTAJA T2 vs T1</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div>
+          <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">EXTRA/UNIDAD</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:var(--green);" id="tier-delta">—</div>
+        </div>
+        <div>
+          <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">+10% A T2 →</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:var(--green);" id="tier-upsell">—</div>
+        </div>
+        <div>
+          <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">RATIO NETO T2/T1</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:var(--teal);" id="tier-ratio">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MONTHLY TABLE ── -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>DISTRIBUCIÓN MENSUAL AÑO 1</div>
+    <div class="panel-body" style="padding:0;">
+      <table class="month-table">
+        <thead>
+          <tr>
+            <th>MES</th>
+            <th>UNITS</th>
+            <th>INGRESOS</th>
+            <th>ACUMULADO</th>
+            <th>%BE</th>
+          </tr>
+        </thead>
+        <tbody id="monthly-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SENSITIVITY + ROI3Y ── -->
+  <div class="panel">
+    <div class="panel-header"><span class="dot"></span>SENSIBILIDAD EBITDA (UNITS × MIX T2)</div>
+    <div class="panel-body">
+      <div style="font-size:8px;color:var(--text3);margin-bottom:8px;letter-spacing:0.5px;">
+        Filas = unidades · Cols = % Tier 2 · Valores en miles de € ·
+        <span style="display:inline-block;width:8px;height:8px;border:1.5px solid var(--amber);vertical-align:middle;margin-left:4px;"></span> actual
+      </div>
+      <div id="sens-container"></div>
+
+      <div class="roi3-grid">
+        <div class="roi3-item">
+          <div class="ri-label">ACUMULADO 3 AÑOS</div>
+          <div class="ri-val c-amber" id="cum3-val">—</div>
+        </div>
+        <div class="roi3-item">
+          <div class="ri-label">ROI 3 AÑOS</div>
+          <div class="ri-val" id="roi3-val">—</div>
+        </div>
+        <div class="roi3-item">
+          <div class="ri-label">PAYBACK PERIOD</div>
+          <div class="ri-val" id="payback-val">—</div>
+        </div>
+      </div>
+
+      <!-- ADDITIONAL STATS -->
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+        <div style="font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">MÉTRICAS ADICIONALES</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">INVERSIÓN TOTAL</div>
+            <div style="font-family:'Bebas Neue';font-size:16px;color:var(--text);" id="totalInvest-val">—</div>
+          </div>
+          <div>
+            <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">MARGEN NETO</div>
+            <div style="font-family:'Bebas Neue';font-size:16px;" id="margin-val">—</div>
+          </div>
+          <div>
+            <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">REVENUE SIN DESCUENTOS</div>
+            <div style="font-family:'Bebas Neue';font-size:16px;color:var(--text2);" id="noDisc-val">—</div>
+          </div>
+          <div>
+            <div style="font-size:8px;color:var(--text3);margin-bottom:2px;">PÉRDIDA TOTAL LEAKS</div>
+            <div style="font-family:'Bebas Neue';font-size:16px;color:var(--red);" id="totalLeaks-val">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /lower-grid -->
+
+<!-- ════════════════════ 3-YEAR PROJECTION ════════════════════ -->
+<div class="sec-title">PROYECCIÓN 3 AÑOS · REVENUE NETO</div>
+<div class="year-grid">
+  <div class="year-card">
+    <div class="yc-label">AÑO 1 — LANZAMIENTO</div>
+    <div class="yc-rev" id="y1-rev">—</div>
+    <div class="yc-details" id="y1-details">—</div>
+    <div class="cum-bar"><div class="cum-fill" id="y1-bar" style="width:0%;"></div></div>
+  </div>
+  <div class="year-card">
+    <div class="yc-label">AÑO 2 — CONSOLIDACIÓN</div>
+    <div class="yc-rev" id="y2-rev">—</div>
+    <div class="yc-details" id="y2-details">—</div>
+    <div class="cum-bar"><div class="cum-fill" id="y2-bar" style="width:0%;"></div></div>
+  </div>
+  <div class="year-card">
+    <div class="yc-label">AÑO 3 — CRECIMIENTO</div>
+    <div class="yc-rev" id="y3-rev">—</div>
+    <div class="yc-details" id="y3-details">—</div>
+    <div class="cum-bar"><div class="cum-fill" id="y3-bar" style="width:0%;"></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════ INSIGHT ════════════════════ -->
+<div class="insight" id="insight-box">—</div>
+
+<!-- ════════════════════ SCRIPT ════════════════════ -->
+<script>
+const MONTH_W = [28, 18, 12, 8, 6, 5, 5, 4, 4, 3, 3, 4]; // sums to 100
+const MONTH_N = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// Formatting helpers
+const fmt  = (n, d=0) => n.toLocaleString('es-ES',{maximumFractionDigits:d,minimumFractionDigits:d}) + '€';
+const fmtU = n => Math.round(n).toLocaleString('es-ES');
+const fmtP = (n, d=1) => n.toLocaleString('es-ES',{maximumFractionDigits:d,minimumFractionDigits:d}) + '%';
+const sgn  = (n, fn) => (n >= 0 ? '+' : '') + fn(n);
+const cc   = n => n > 0 ? 'c-green' : n < 0 ? 'c-red' : 'c-amber';
+const setClass = (el, cn) => { el.className = el.className.replace(/c-\w+/g,'').trim() + ' ' + cn; };
+
+// Clock
+setInterval(() => {
+  document.getElementById('live-clock').textContent = new Date().toLocaleTimeString('es-ES');
+}, 1000);
+document.getElementById('live-clock').textContent = new Date().toLocaleTimeString('es-ES');
+
+function setBar(id, val, max, colorPos, colorNeg, label) {
+  const el = document.getElementById(id);
+  const pct = max > 0 ? Math.min(Math.max(val / max * 100, 0), 100) : 0;
+  el.style.width = Math.max(pct, 0.5) + '%';
+  el.style.background = val >= 0 ? colorPos : colorNeg;
+  el.style.color = val >= 0 ? (colorPos === '#E85050' ? '#fff' : '#04180E') : '#fff';
+  el.textContent = pct > 12 ? label : '';
+}
+
+function calc() {
+  // ── Read price/platform inputs ──
+  const P1    = Math.max(0.01, +document.getElementById('p1-in').value    || 4.99);
+  const P2    = Math.max(0.01, +document.getElementById('p2-in').value    || 9.99);
+  const STEAM = Math.min(99, Math.max(0, +document.getElementById('steam-in').value || 30)) / 100;
+
+  // Live price preview (before refunds/sales, after Steam)
+  document.getElementById('p1-net-preview').textContent = (P1*(1-STEAM)).toFixed(2) + '€';
+  document.getElementById('p2-net-preview').textContent = (P2*(1-STEAM)).toFixed(2) + '€';
+
+  // ── Read inputs ──
+  const invest  = +document.getElementById('invest').value;
+  const mkt     = +document.getElementById('mkt').value;
+  const mixPct  = +document.getElementById('mixPct').value / 100;
+  const kpp     = +document.getElementById('keysPerPack').value;
+  const units1  = +document.getElementById('units1').value;
+  const g2      = +document.getElementById('g2').value / 100;
+  const g3      = +document.getElementById('g3').value / 100;
+  const saleD   = +document.getElementById('saleDisc').value / 100;
+  const saleP   = +document.getElementById('salePct').value / 100;
+  const refund  = +document.getElementById('refund').value / 100;
+
+  // Update input displays
+  document.getElementById('invest-out').textContent  = fmtU(invest) + '€';
+  document.getElementById('mkt-out').textContent     = fmtU(mkt) + '€';
+  document.getElementById('mix-out').textContent     = Math.round(mixPct*100) + '%';
+  document.getElementById('keys-out').textContent    = kpp;
+  document.getElementById('units1-out').textContent  = fmtU(units1);
+  document.getElementById('g2-out').textContent      = Math.round(g2*100) + '%';
+  document.getElementById('g3-out').textContent      = Math.round(g3*100) + '%';
+  document.getElementById('saleDisc-out').textContent= Math.round(saleD*100) + '%';
+  document.getElementById('salePct-out').textContent = Math.round(saleP*100) + '%';
+  document.getElementById('refund-out').textContent  = Math.round(refund*100) + '%';
+
+  // ── Core calculations ──
+  const totalInvest = invest + mkt;
+
+  // Unit split
+  const u_t2 = Math.round(units1 * mixPct);
+  const u_t1 = units1 - u_t2;
+
+  // Effective gross per unit (blended full/sale price)
+  const grossAvg1 = P1 * (1 - saleP * saleD);
+  const grossAvg2 = P2 * (1 - saleP * saleD);
+
+  // Net per unit after Steam and refunds
+  const netAvg1 = grossAvg1 * (1 - STEAM) * (1 - refund);
+  const netAvg2 = grossAvg2 * (1 - STEAM) * (1 - refund);
+
+  // Revenue by tier
+  const grossRev1 = u_t1 * grossAvg1;
+  const grossRev2 = u_t2 * grossAvg2;
+  const netRev1   = u_t1 * netAvg1;
+  const netRev2   = u_t2 * netAvg2;
+  const grossTotal = grossRev1 + grossRev2;
+  const netTotal   = netRev1 + netRev2;
+
+  // Steam cut (what Steam actually keeps)
+  const steamCut = grossTotal * STEAM;
+
+  // Loss to sale discounts (what we'd have gotten at full price, minus what we got)
+  const fullPriceNet1 = u_t1 * P1 * (1-STEAM) * (1-refund);
+  const fullPriceNet2 = u_t2 * P2 * (1-STEAM) * (1-refund);
+  const saleLoss = (fullPriceNet1 + fullPriceNet2) - netTotal;
+
+  // Loss to refunds (after Steam, the refunded amount)
+  const refundLoss = (u_t1 * grossAvg1 * (1-STEAM) + u_t2 * grossAvg2 * (1-STEAM)) * refund;
+
+  // What we'd earn without any discounts or refunds
+  const noDiscNoRefundNet = (u_t1 * P1 + u_t2 * P2) * (1-STEAM);
+
+  // ARPU
+  const arpu = units1 > 0 ? netTotal / units1 : 0;
+
+  // EBITDA & ROI Year 1
+  const ebitda1 = netTotal - totalInvest;
+  const roi1 = totalInvest > 0 ? ebitda1 / totalInvest * 100 : 0;
+  const margin1 = netTotal > 0 ? ebitda1 / netTotal * 100 : 0;
+
+  // Break-even
+  const beUnits = arpu > 0 ? Math.ceil(totalInvest / arpu) : Infinity;
+
+  // Keys & players
+  const keysTotal   = u_t2 * kpp;
+  const totalPlayers= units1 + keysTotal;
+  const cpp         = totalPlayers > 0 ? totalInvest / totalPlayers : 0;
+  const viralCoeff  = units1 > 0 ? totalPlayers / units1 : 0;
+  const costPerKey  = keysTotal > 0 ? totalInvest / keysTotal : 0;
+
+  // Tier delta
+  const tierDelta  = netAvg2 - netAvg1;
+  const tierUpsell = Math.round(units1 * 0.10 * tierDelta);
+  const tierRatio  = netAvg1 > 0 ? netAvg2 / netAvg1 : 0;
+
+  // Years 2 & 3
+  const units2 = Math.round(units1 * (1 + g2));
+  const units3 = Math.round(units2 * (1 + g3));
+  const netRev_y2 = units2 * arpu;
+  const netRev_y3 = units3 * arpu;
+  const cum3       = netTotal + netRev_y2 + netRev_y3;
+  const roi3       = totalInvest > 0 ? (cum3 - totalInvest) / totalInvest * 100 : 0;
+
+  // Payback via monthly ramp
+  let cumMonth = 0, paybackMonth = -1;
+  for (let i = 0; i < 12; i++) {
+    cumMonth += Math.round(units1 * MONTH_W[i] / 100) * arpu;
+    if (cumMonth >= totalInvest && paybackMonth === -1) paybackMonth = i + 1;
+  }
+  if (paybackMonth === -1) {
+    // Extend into year 2
+    const monthlyY2 = netRev_y2 / 12;
+    let remaining = totalInvest - netTotal;
+    if (monthlyY2 > 0 && remaining > 0) {
+      paybackMonth = 12 + Math.ceil(remaining / monthlyY2);
+    } else {
+      paybackMonth = 999;
+    }
+  }
+
+  // ══════════════════════════════════════════
+  // UPDATE DOM
+  // ══════════════════════════════════════════
+
+  // ── TOP 4 METRICS ──
+  const netRevEl = document.getElementById('netRev-val');
+  netRevEl.textContent = fmt(Math.round(netTotal));
+  setClass(netRevEl, cc(ebitda1));
+  netRevEl.className = 'tm-val ' + cc(ebitda1);
+
+  const ebitdaEl = document.getElementById('ebitda-val');
+  ebitdaEl.textContent = sgn(ebitda1, n => fmt(Math.round(n)));
+  ebitdaEl.className = 'tm-val ' + cc(ebitda1);
+  document.getElementById('ebitda-sub').textContent = 'inversión total: ' + fmt(totalInvest);
+  const eTag = document.getElementById('ebitda-tag');
+  eTag.className = 'tag ' + (ebitda1 >= 0 ? 'tag-g' : 'tag-r');
+  eTag.textContent = ebitda1 >= 0 ? '▲ RENTABLE' : '▼ EN PÉRDIDAS';
+
+  const roiEl = document.getElementById('roi-val');
+  roiEl.textContent = sgn(roi1, n => fmtP(n, 1));
+  roiEl.className = 'tm-val ' + cc(roi1);
+
+  const beEl = document.getElementById('be-val');
+  beEl.textContent = isFinite(beUnits) ? fmtU(beUnits) : '∞';
+  beEl.className = 'tm-val ' + (beUnits <= units1 ? 'c-green' : beUnits <= units1 * 1.5 ? 'c-amber' : 'c-red');
+  document.getElementById('be-sub').textContent = 'tienes ' + fmtU(units1) + ' uds en año 1';
+  const beTag = document.getElementById('be-tag');
+  if (beUnits <= units1) {
+    beTag.className = 'tag tag-g';
+    beTag.textContent = '✓ BE SUPERADO';
+  } else if (isFinite(beUnits)) {
+    beTag.className = 'tag tag-r';
+    beTag.textContent = '✗ FALTAN ' + fmtU(beUnits - units1) + ' UDS';
+  } else {
+    beTag.className = 'tag tag-r';
+    beTag.textContent = '✗ SIN VENTAS';
+  }
+
+  // ── 6 SECONDARY METRICS ──
+  document.getElementById('arpu-val').textContent     = fmt(arpu, 2);
+  document.getElementById('grossRev-val').textContent = fmt(Math.round(grossTotal));
+  document.getElementById('refundLoss-val').textContent = '-' + fmt(Math.round(refundLoss));
+  document.getElementById('saleLoss-val').textContent   = '-' + fmt(Math.round(saleLoss));
+  document.getElementById('players-val').textContent  = fmtU(totalPlayers);
+  document.getElementById('cpp-val').textContent      = fmt(cpp, 2);
+
+  // ── BARS ──
+  const maxBar = Math.max(netTotal, totalInvest, netRev1, netRev2, 1);
+  setBar('bar-t1',    netRev1,    maxBar, '#6B9FFF', '#6B9FFF', fmt(Math.round(netRev1)));
+  document.getElementById('bar-t1-amt').textContent = fmt(Math.round(netRev1));
+
+  setBar('bar-t2',    netRev2,    maxBar, '#3DDB72', '#3DDB72', fmt(Math.round(netRev2)));
+  document.getElementById('bar-t2-amt').textContent = fmt(Math.round(netRev2));
+
+  setBar('bar-cost',  totalInvest, maxBar, '#E85050', '#E85050', fmt(totalInvest));
+  document.getElementById('bar-cost-amt').textContent = fmt(totalInvest);
+
+  setBar('bar-steam', steamCut,   maxBar, '#4A3D6B', '#4A3D6B', fmt(Math.round(steamCut)));
+  document.getElementById('bar-steam-amt').textContent = fmt(Math.round(steamCut));
+
+  const ebitdaBarEl = document.getElementById('bar-ebitda');
+  const eColor = ebitda1 >= 0 ? '#3DDB72' : '#E85050';
+  const eTextColor = ebitda1 >= 0 ? '#04180E' : '#fff';
+  setBar('bar-ebitda', Math.abs(ebitda1), maxBar, eColor, eColor, sgn(ebitda1, n => fmt(Math.round(n))));
+  ebitdaBarEl.style.color = eTextColor;
+  document.getElementById('bar-ebitda-amt').textContent = sgn(ebitda1, n => fmt(Math.round(n)));
+  document.getElementById('bar-ebitda-amt').style.color = eColor;
+
+  // ── TIER TABLE ──
+  const avgGross = units1 > 0 ? grossTotal / units1 : 0;
+  document.getElementById('t1-price').textContent  = fmt(grossAvg1, 2);
+  document.getElementById('t1-units').textContent  = fmtU(u_t1);
+  document.getElementById('t1-gross').textContent  = fmt(Math.round(grossRev1));
+  document.getElementById('t1-net').textContent    = fmt(Math.round(netRev1));
+  document.getElementById('t1-pct').textContent    = netTotal > 0 ? fmtP(netRev1/netTotal*100, 1) : '—';
+
+  document.getElementById('t2-price').textContent  = fmt(grossAvg2, 2);
+  document.getElementById('t2-units').textContent  = fmtU(u_t2);
+  document.getElementById('t2-gross').textContent  = fmt(Math.round(grossRev2));
+  document.getElementById('t2-net').textContent    = fmt(Math.round(netRev2));
+  document.getElementById('t2-pct').textContent    = netTotal > 0 ? fmtP(netRev2/netTotal*100, 1) : '—';
+
+  document.getElementById('tot-avgprice').textContent = fmt(avgGross, 2);
+  document.getElementById('tot-units').textContent    = fmtU(units1);
+  document.getElementById('tot-gross').textContent    = fmt(Math.round(grossTotal));
+  document.getElementById('tot-net').textContent      = fmt(Math.round(netTotal));
+
+  // ── KEYS ──
+  document.getElementById('keys-gen').textContent    = fmtU(keysTotal);
+  document.getElementById('viral-coeff').textContent = viralCoeff.toFixed(2) + '×';
+  document.getElementById('extra-players').textContent = fmtU(keysTotal);
+  document.getElementById('cost-per-key').textContent  = keysTotal > 0 ? fmt(costPerKey, 2) : '—';
+
+  // ── TIER DELTA ──
+  document.getElementById('tier-delta').textContent  = '+' + fmt(tierDelta, 2);
+  document.getElementById('tier-upsell').textContent = (tierUpsell >= 0 ? '+' : '') + fmt(tierUpsell);
+  document.getElementById('tier-ratio').textContent  = tierRatio.toFixed(2) + '×';
+
+  // ── MONTHLY TABLE ──
+  const tbody = document.getElementById('monthly-tbody');
+  tbody.innerHTML = '';
+  let cumRev = 0, firstBEmonth = true;
+  MONTH_W.forEach((w, i) => {
+    const mu     = Math.round(units1 * w / 100);
+    const mRev   = mu * arpu;
+    cumRev       += mRev;
+    const bePct  = totalInvest > 0 ? Math.min(cumRev / totalInvest * 100, 100) : 100;
+    const isBE   = firstBEmonth && cumRev >= totalInvest;
+    if (isBE) firstBEmonth = false;
+
+    const tr = document.createElement('tr');
+    if (isBE) tr.className = 'be-row';
+    tr.innerHTML = `
+      <td>${MONTH_N[i]}${isBE ? ' 🎯' : ''}</td>
+      <td class="num">${fmtU(mu)}</td>
+      <td class="num">${fmt(Math.round(mRev))}</td>
+      <td class="${cumRev >= totalInvest ? 'pos' : 'num'}">${fmt(Math.round(cumRev))}</td>
+      <td class="${bePct >= 100 ? 'pos' : ''}">${fmtP(bePct, 0)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // ── SENSITIVITY TABLE ──
+  const sUnits = [
+    Math.round(units1 * 0.50),
+    Math.round(units1 * 0.75),
+    units1,
+    Math.round(units1 * 1.25),
+    Math.round(units1 * 1.50)
+  ];
+  const sMix = [20, 40, 60, 80];
+  const currentMixSnap = sMix.reduce((b, m) => Math.abs(m - mixPct*100) < Math.abs(b - mixPct*100) ? m : b, sMix[0]);
+
+  let sh = '<table class="sens-table"><thead><tr><th>Units ↓ / Mix →</th>';
+  sMix.forEach(m => sh += `<th>${m}% T2</th>`);
+  sh += '</tr></thead><tbody>';
+
+  sUnits.forEach(su => {
+    sh += `<tr><th style="text-align:left;font-size:9px;color:var(--text3);">${fmtU(su)}</th>`;
+    sMix.forEach(sm => {
+      const smP  = sm / 100;
+      const sArpu= netAvg1 * (1-smP) + netAvg2 * smP;
+      const sRev = su * sArpu;
+      const sE   = sRev - totalInvest;
+      const cls  = sE > 5000 ? 's-pos' : sE < -5000 ? 's-neg' : 's-zero';
+      const isCur= su === units1 && sm === currentMixSnap;
+      sh += `<td class="${cls}${isCur ? ' s-cur' : ''}">${sgn(sE, n => fmt(Math.round(n/1000)))}k</td>`;
+    });
+    sh += '</tr>';
+  });
+  sh += '</tbody></table>';
+  document.getElementById('sens-container').innerHTML = sh;
+
+  // ── ROI 3Y BOX ──
+  document.getElementById('cum3-val').textContent = fmt(Math.round(cum3));
+  const roi3El = document.getElementById('roi3-val');
+  roi3El.textContent = sgn(roi3, n => fmtP(n, 0));
+  roi3El.className = 'ri-val ' + cc(roi3);
+  const pbEl = document.getElementById('payback-val');
+  if (paybackMonth <= 12) {
+    pbEl.textContent = 'MES ' + paybackMonth;
+    pbEl.className = 'ri-val ' + (paybackMonth <= 6 ? 'c-green' : 'c-amber');
+  } else if (paybackMonth <= 36) {
+    pbEl.textContent = 'MES ' + paybackMonth;
+    pbEl.className = 'ri-val c-amber';
+  } else {
+    pbEl.textContent = '> AÑO 3';
+    pbEl.className = 'ri-val c-red';
+  }
+
+  // ── ADDITIONAL STATS ──
+  document.getElementById('totalInvest-val').textContent = fmt(totalInvest);
+  const marginEl = document.getElementById('margin-val');
+  marginEl.textContent = fmtP(margin1, 1);
+  marginEl.className = cc(margin1);
+  document.getElementById('noDisc-val').textContent   = fmt(Math.round(noDiscNoRefundNet));
+  document.getElementById('totalLeaks-val').textContent= '-' + fmt(Math.round(saleLoss + refundLoss));
+
+  // ── 3-YEAR PROJECTION ──
+  const maxY = Math.max(netTotal, netRev_y2, netRev_y3, 1);
+
+  const y1El = document.getElementById('y1-rev');
+  y1El.textContent = fmt(Math.round(netTotal));
+  y1El.className = 'yc-rev ' + cc(ebitda1);
+  document.getElementById('y1-details').innerHTML =
+    `<span class="hl">${fmtU(units1)} uds</span> vendidas<br>` +
+    `EBITDA: <span class="${cc(ebitda1)}">${sgn(ebitda1, n=>fmt(Math.round(n)))}</span><br>` +
+    `ROI: <span class="${cc(roi1)}">${sgn(roi1, n=>fmtP(n,1))}</span>`;
+  document.getElementById('y1-bar').style.width = Math.min(netTotal/maxY*100,100) + '%';
+
+  const y2El = document.getElementById('y2-rev');
+  y2El.textContent = fmt(Math.round(netRev_y2));
+  y2El.className = 'yc-rev c-green';
+  document.getElementById('y2-details').innerHTML =
+    `<span class="hl">${fmtU(units2)} uds</span> (+${Math.round(g2*100)}%)<br>` +
+    `EBITDA: <span class="c-green">+${fmt(Math.round(netRev_y2))}</span><br>` +
+    `Acumulado: <span class="hl">${fmt(Math.round(netTotal+netRev_y2))}</span>`;
+  document.getElementById('y2-bar').style.width = Math.min(netRev_y2/maxY*100,100) + '%';
+
+  const y3El = document.getElementById('y3-rev');
+  y3El.textContent = fmt(Math.round(netRev_y3));
+  y3El.className = 'yc-rev c-green';
+  document.getElementById('y3-details').innerHTML =
+    `<span class="hl">${fmtU(units3)} uds</span> (+${Math.round(g3*100)}%)<br>` +
+    `EBITDA: <span class="c-green">+${fmt(Math.round(netRev_y3))}</span><br>` +
+    `Acum 3A: <span class="hl">${fmt(Math.round(cum3))}</span>`;
+  document.getElementById('y3-bar').style.width = Math.min(netRev_y3/maxY*100,100) + '%';
+
+  // ── INSIGHT ──
+  const beOK = beUnits <= units1;
+  const extraT2gain = fmt(tierUpsell);
+  document.getElementById('insight-box').innerHTML =
+    `<strong>Análisis:</strong> Con ARPU neto de <strong>${fmt(arpu, 2)}/ud</strong> (Steam 30% ` +
+    `+ ${Math.round(saleP*100)}% ventas a −${Math.round(saleD*100)}% + ${Math.round(refund*100)}% reembolsos), necesitas ` +
+    `<strong>${isFinite(beUnits) ? fmtU(beUnits) : '∞'} unidades</strong> para break-even. ` +
+    (beOK
+      ? `<span class="tag tag-g">✓ AÑO 1 SUPERA EL BE</span> — margen de ${fmtU(units1-beUnits)} uds (${fmtP((units1-beUnits)/beUnits*100,0)} sobre mínimo). `
+      : `<span class="tag tag-r">✗ AÑO 1 NO ALCANZA BE</span> — faltan ${fmtU(beUnits-units1)} uds. `) +
+    `Mover un 10% más al Tier 2 genera <strong>${extraT2gain}</strong> extra sin vender más unidades. ` +
+    `Las <strong>${fmtU(keysTotal)} keys</strong> del T2 llevan el juego a <strong>${fmtU(totalPlayers)} jugadores</strong> (coste ` +
+    `${fmt(cpp,2)}/jugador). ` +
+    `En 3 años: <strong>${fmt(Math.round(cum3))}</strong> acumulado · ` +
+    (roi3 > 150
+      ? `<span class="tag tag-g">ROI 3A: +${fmtP(roi3,0)}</span> — sólido retorno.`
+      : roi3 > 0
+      ? `<span class="tag tag-a">ROI 3A: +${fmtP(roi3,0)}</span> — positivo.`
+      : `<span class="tag tag-r">ROI 3A: ${fmtP(roi3,0)}</span> — revisa el volumen.`);
+}
+
+document.querySelectorAll('input[type=range], input[type=number]').forEach(el => el.addEventListener('input', calc));
+calc();
+</script>
+</body>
+</html>
