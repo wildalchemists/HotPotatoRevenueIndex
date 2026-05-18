@@ -35,6 +35,40 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
 .clock{font-size:13px;font-weight:600;color:var(--text2);letter-spacing:2px;}
 .save-btn{background:var(--amber2);border:1px solid var(--amber);color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;padding:5px 12px;border-radius:2px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
 .save-btn:hover{background:var(--amber);color:var(--bg);}
+.search-in{background:var(--bg4);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 10px;border-radius:2px;outline:none;width:160px;transition:all .15s;}
+.search-in:focus{border-color:var(--amber);box-shadow:0 0 0 2px rgba(245,166,35,.1);width:220px;}
+.proj-sel{background:var(--bg4);border:1px solid var(--border);color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 8px;border-radius:2px;outline:none;cursor:pointer;max-width:160px;}
+.proj-sel:hover{border-color:var(--amber);}
+.ic-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:13px;width:28px;height:26px;border-radius:2px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;padding:0;}
+.ic-btn:hover{background:var(--amber2);color:var(--amber);border-color:var(--amber);}
+.alerts-bar{background:linear-gradient(90deg,rgba(232,80,80,.15),rgba(232,80,80,.05));border-bottom:1px solid var(--red);padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.alert-item{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:1px;color:var(--red);text-transform:uppercase;background:rgba(232,80,80,.1);padding:3px 8px;border-radius:2px;border:1px solid rgba(232,80,80,.3);}
+.alert-item.warn{color:var(--amber);background:rgba(245,166,35,.1);border-color:rgba(245,166,35,.3);}
+.alert-item .ai-count{font-family:'Bebas Neue',cursive;font-size:14px;}
+@media print{
+  .topbar,.alerts-bar,.tab,.save-btn,.ic-btn,.search-in,.proj-sel,.add-btn,.del-btn{display:none !important;}
+  .page{display:block !important;page-break-after:always;padding:20px;}
+  body{max-width:none;background:#fff;color:#000;}
+  .panel,.kpi{border-color:#ccc;background:#fff;}
+  .kpi-val,.yc-rev,.logo,.ival{color:#000 !important;}
+}
+.health-ring{position:relative;width:90px;height:90px;}
+.health-ring svg{transform:rotate(-90deg);}
+.health-ring .ring-bg{stroke:var(--border);}
+.health-ring .ring-fg{stroke-linecap:round;transition:stroke-dashoffset .6s ease,stroke .3s;}
+.health-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.health-num .hn-val{font-family:'Bebas Neue',cursive;font-size:28px;line-height:1;}
+.health-num .hn-lbl{font-size:7px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;}
+.burndown svg{display:block;width:100%;}
+.burndown .bd-line{fill:none;stroke-width:1.5;}
+.sev{display:inline-block;font-size:8px;padding:2px 6px;border-radius:2px;letter-spacing:1px;font-weight:700;}
+.sev-CRIT{background:#3A0D0D;color:var(--red);}
+.sev-HIGH{background:rgba(232,80,80,.15);color:var(--red);}
+.sev-MED{background:rgba(245,166,35,.15);color:var(--amber);}
+.sev-LOW{background:var(--bg4);color:var(--text3);}
+.filter-bar{display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);}
+.filter-bar select,.filter-bar input{background:var(--bg4);border:1px solid var(--border);color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:9px;padding:4px 8px;border-radius:2px;outline:none;}
+.filter-bar select:focus,.filter-bar input:focus{border-color:var(--amber);}
 
 /* MAIN */
 .page{display:none;padding:16px 20px 40px;}
@@ -214,23 +248,37 @@ select.sel-in:focus{border-color:var(--amber);}
   <div class="topbar-left">
     <div>
       <div class="logo">HOT POTATO</div>
-      <div class="logo-sub">Project Console · v1.0</div>
+      <div class="logo-sub">Project Console · v2.0</div>
     </div>
     <div class="tabs" id="tabs">
       <button class="tab active" data-tab="dashboard"><span class="dot"></span>DASHBOARD</button>
       <button class="tab" data-tab="financiero">FINANCIERO</button>
       <button class="tab" data-tab="produccion">PRODUCCIÓN</button>
+      <button class="tab" data-tab="bugs">BUGS</button>
       <button class="tab" data-tab="presupuesto">PRESUPUESTO</button>
       <button class="tab" data-tab="equipo">EQUIPO</button>
       <button class="tab" data-tab="calendario">CALENDARIO</button>
+      <button class="tab" data-tab="marketing">MARKETING</button>
+      <button class="tab" data-tab="log">LOG</button>
+      <button class="tab" data-tab="docs">DOCS</button>
     </div>
   </div>
   <div class="topbar-right">
+    <input class="search-in" id="global-search" placeholder="🔍 Buscar (Ctrl+F)" oninput="applySearch(this.value)">
+    <select class="proj-sel" id="proj-switcher" onchange="switchProject(this.value)"></select>
+    <button class="ic-btn" onclick="newProject()" title="Nuevo proyecto">+</button>
+    <button class="ic-btn" onclick="exportJSON()" title="Exportar JSON (Ctrl+E)">↓</button>
+    <button class="ic-btn" onclick="document.getElementById('import-file').click()" title="Importar JSON">↑</button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importJSON(this)">
+    <button class="ic-btn" onclick="window.print()" title="Imprimir / PDF">⎙</button>
     <div class="live-dot"></div>
     <div class="clock" id="clock">--:--:--</div>
     <button class="save-btn" onclick="saveAll()">◆ GUARDAR</button>
   </div>
 </div>
+
+<!-- ══ ALERTS BAR ══ -->
+<div class="alerts-bar" id="alerts-bar" style="display:none;"></div>
 
 <!-- ══════════════════════════════════════════ -->
 <!-- DASHBOARD -->
@@ -256,12 +304,24 @@ select.sel-in:focus{border-color:var(--amber);}
     </div>
   </div>
 
-  <!-- TOP KPIs -->
-  <div class="g4" style="gap:1px;background:var(--border2);margin-bottom:12px;">
-    <div class="kpi"><div class="kpi-lbl">DÍAS A LANZAMIENTO</div><div class="kpi-val c-amber" id="d-days">—</div><div class="kpi-sub" id="d-days-sub">—</div></div>
-    <div class="kpi"><div class="kpi-lbl">PROGRESO PROYECTO</div><div class="kpi-val" id="d-progress">—</div><div class="kpi-sub">tareas completadas</div></div>
-    <div class="kpi"><div class="kpi-lbl">REVENUE NETO AÑO 1</div><div class="kpi-val c-green" id="d-rev">—</div><div class="kpi-sub">proyección</div></div>
-    <div class="kpi"><div class="kpi-lbl">INVERSIÓN TOTAL</div><div class="kpi-val" id="d-invest">—</div><div class="kpi-sub" id="d-invest-sub">—</div></div>
+  <!-- HEALTH + TOP KPIs -->
+  <div style="display:grid;grid-template-columns:200px 1fr;gap:12px;margin-bottom:12px;">
+    <div class="panel" style="margin:0;">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>HEALTH SCORE</div></div>
+      <div class="pb" style="display:flex;align-items:center;justify-content:center;flex-direction:column;padding:18px 12px;">
+        <div class="health-ring">
+          <svg width="90" height="90"><circle class="ring-bg" cx="45" cy="45" r="38" fill="none" stroke-width="6"/><circle class="ring-fg" id="hr-fg" cx="45" cy="45" r="38" fill="none" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="238.76"/></svg>
+          <div class="health-num"><div class="hn-val" id="hr-val">—</div><div class="hn-lbl">/ 100</div></div>
+        </div>
+        <div id="hr-label" style="margin-top:8px;font-size:9px;letter-spacing:2px;text-transform:uppercase;">—</div>
+      </div>
+    </div>
+    <div class="g4" style="gap:1px;background:var(--border2);">
+      <div class="kpi"><div class="kpi-lbl">DÍAS A LANZAMIENTO</div><div class="kpi-val c-amber" id="d-days">—</div><div class="kpi-sub" id="d-days-sub">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">PROGRESO PROYECTO</div><div class="kpi-val" id="d-progress">—</div><div class="kpi-sub">tareas completadas</div></div>
+      <div class="kpi"><div class="kpi-lbl">REVENUE NETO AÑO 1</div><div class="kpi-val c-green" id="d-rev">—</div><div class="kpi-sub">proyección</div></div>
+      <div class="kpi"><div class="kpi-lbl">INVERSIÓN TOTAL</div><div class="kpi-val" id="d-invest">—</div><div class="kpi-sub" id="d-invest-sub">—</div></div>
+    </div>
   </div>
 
   <div class="g2">
@@ -432,6 +492,12 @@ select.sel-in:focus{border-color:var(--amber);}
         <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addTask()">+ TAREA</button>
       </div>
     </div>
+    <div class="filter-bar">
+      <span style="font-size:8px;letter-spacing:1.5px;color:var(--text3);">FILTROS:</span>
+      <select id="tk-f-dept" onchange="renderProduccion()"><option value="">DEPTO</option><option>CODE</option><option>ART</option><option>DESIGN</option><option>AUDIO</option><option>QA</option><option>MKT</option><option>LEGAL</option><option>ADMIN</option></select>
+      <select id="tk-f-status" onchange="renderProduccion()"><option value="">ESTADO</option><option>TODO</option><option>WIP</option><option>DONE</option><option>BLOCK</option></select>
+      <input id="tk-f-text" placeholder="buscar tarea/asignado..." oninput="renderProduccion()">
+    </div>
     <div class="pb" style="padding:0;">
       <table class="tbl" id="task-table">
         <thead><tr>
@@ -445,6 +511,45 @@ select.sel-in:focus{border-color:var(--amber);}
           <th style="width:30px;"></th>
         </tr></thead>
         <tbody id="task-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- BUGS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="page-bugs">
+  <div class="g4" style="gap:1px;background:var(--border2);margin-bottom:12px;">
+    <div class="kpi"><div class="kpi-lbl">BUGS ABIERTOS</div><div class="kpi-val c-red" id="bug-open">—</div><div class="kpi-sub">sin resolver</div></div>
+    <div class="kpi"><div class="kpi-lbl">CRÍTICOS</div><div class="kpi-val c-red" id="bug-crit">—</div><div class="kpi-sub">bloqueantes</div></div>
+    <div class="kpi"><div class="kpi-lbl">RESUELTOS</div><div class="kpi-val c-green" id="bug-fixed">—</div><div class="kpi-sub">cerrados</div></div>
+    <div class="kpi"><div class="kpi-lbl">RATIO FIX</div><div class="kpi-val c-amber" id="bug-ratio">—</div><div class="kpi-sub">% resueltos</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="ph"><div class="ph-left"><span class="dot"></span>BUG TRACKER</div>
+      <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addBug()">+ BUG</button>
+    </div>
+    <div class="filter-bar">
+      <span style="font-size:8px;letter-spacing:1.5px;color:var(--text3);">FILTROS:</span>
+      <select id="bug-f-sev"><option value="">SEVERIDAD</option><option>CRIT</option><option>HIGH</option><option>MED</option><option>LOW</option></select>
+      <select id="bug-f-status"><option value="">ESTADO</option><option>OPEN</option><option>WIP</option><option>FIXED</option><option>WONTFIX</option></select>
+      <input id="bug-f-text" placeholder="buscar texto...">
+    </div>
+    <div class="pb" style="padding:0;">
+      <table class="tbl" id="bug-table">
+        <thead><tr>
+          <th style="width:80px;">FECHA</th>
+          <th style="width:60px;">SEV</th>
+          <th>TÍTULO</th>
+          <th style="width:80px;">BUILD</th>
+          <th>PASOS REPRO</th>
+          <th style="width:100px;">ASIGNADO</th>
+          <th style="width:80px;">ESTADO</th>
+          <th style="width:30px;"></th>
+        </tr></thead>
+        <tbody id="bug-tbody"></tbody>
       </table>
     </div>
   </div>
@@ -557,6 +662,120 @@ select.sel-in:focus{border-color:var(--amber);}
 </div>
 
 <!-- ══════════════════════════════════════════ -->
+<!-- MARKETING -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="page-marketing">
+  <div class="g4" style="gap:1px;background:var(--border2);margin-bottom:12px;">
+    <div class="kpi"><div class="kpi-lbl">WISHLIST</div><div class="kpi-val c-purple" id="mk-wish">—</div><div class="kpi-sub" id="mk-wish-delta">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">% RESEÑAS POS.</div><div class="kpi-val c-green" id="mk-pos">—</div><div class="kpi-sub" id="mk-pos-sub">—</div></div>
+    <div class="kpi"><div class="kpi-lbl">VENTAS REALES</div><div class="kpi-val" id="mk-sales">—</div><div class="kpi-sub">acumuladas</div></div>
+    <div class="kpi"><div class="kpi-lbl">REFUND RATE</div><div class="kpi-val c-red" id="mk-refund">—</div><div class="kpi-sub">real</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="panel">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>WISHLIST · EVOLUCIÓN</div>
+        <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addWishPoint()">+ PUNTO</button>
+      </div>
+      <div class="pb">
+        <div id="mk-wish-chart" style="margin-bottom:10px;"></div>
+        <table class="tbl" id="wish-table">
+          <thead><tr><th>FECHA</th><th>WISHLISTS</th><th>DELTA</th><th style="width:30px;"></th></tr></thead>
+          <tbody id="wish-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>RESEÑAS Y VENTAS POST-LAUNCH</div>
+        <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addReviewPoint()">+ PUNTO</button>
+      </div>
+      <div class="pb" style="padding:0;">
+        <table class="tbl" id="rev-table">
+          <thead><tr><th>FECHA</th><th>RESEÑAS +</th><th>RESEÑAS −</th><th>VENTAS</th><th>% REFUND</th><th style="width:30px;"></th></tr></thead>
+          <tbody id="rev-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>PRESS KIT · CONTACTOS</div>
+        <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addPress()">+ CONTACTO</button>
+      </div>
+      <div class="pb" style="padding:0;">
+        <table class="tbl" id="press-table">
+          <thead><tr><th>NOMBRE</th><th style="width:80px;">TIPO</th><th>CONTACTO</th><th style="width:90px;">ESTADO</th><th style="width:30px;"></th></tr></thead>
+          <tbody id="press-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>ROADMAP POST-LAUNCH</div>
+        <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addRoad()">+ ENTRADA</button>
+      </div>
+      <div class="pb" style="padding:0;">
+        <table class="tbl" id="road-table">
+          <thead><tr><th>NOMBRE</th><th style="width:80px;">TIPO</th><th style="width:100px;">FECHA</th><th style="width:80px;">ESTADO</th><th style="width:30px;"></th></tr></thead>
+          <tbody id="road-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- LOG -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="page-log">
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="panel">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>REUNIONES Y DECISIONES</div>
+        <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addMeeting()">+ REUNIÓN</button>
+      </div>
+      <div class="pb" id="meet-list"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-left"><span class="dot"></span>ACTIVITY LOG</div>
+        <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="if(confirm('¿Limpiar log?')){D.log.activity=[];renderAll();}">LIMPIAR</button>
+      </div>
+      <div class="pb" id="activity-list" style="max-height:600px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DOCS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="page-docs">
+  <div class="panel">
+    <div class="ph"><div class="ph-left"><span class="dot"></span>DOCUMENTOS Y ENLACES</div>
+      <button class="save-btn" style="font-size:8px;padding:3px 8px;" onclick="addDoc()">+ ENLACE</button>
+    </div>
+    <div class="pb" style="padding:0;">
+      <table class="tbl" id="docs-table">
+        <thead><tr><th>NOMBRE</th><th style="width:100px;">CATEGORÍA</th><th>URL</th><th>NOTAS</th><th style="width:30px;"></th></tr></thead>
+        <tbody id="docs-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;">
+    <div style="font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">ATAJOS DE TECLADO</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:9px;color:var(--text2);">
+      <div><kbd style="background:var(--bg4);padding:2px 6px;border-radius:2px;color:var(--amber);">1–9 / 0</kbd> Cambiar tab</div>
+      <div><kbd style="background:var(--bg4);padding:2px 6px;border-radius:2px;color:var(--amber);">Ctrl+S</kbd> Guardar</div>
+      <div><kbd style="background:var(--bg4);padding:2px 6px;border-radius:2px;color:var(--amber);">Ctrl+E</kbd> Exportar JSON</div>
+      <div><kbd style="background:var(--bg4);padding:2px 6px;border-radius:2px;color:var(--amber);">Ctrl+F</kbd> Búsqueda global</div>
+      <div><kbd style="background:var(--bg4);padding:2px 6px;border-radius:2px;color:var(--amber);">Ctrl+P</kbd> Imprimir / PDF</div>
+      <div><kbd style="background:var(--bg4);padding:2px 6px;border-radius:2px;color:var(--amber);">Esc</kbd> Limpiar búsqueda</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
 <!-- SCRIPT -->
 <!-- ══════════════════════════════════════════ -->
 <script>
@@ -609,29 +828,232 @@ const DEFAULTS = {
     { name:'Javi Ruiz', role:'Game Designer', dept:'DESIGN', hpw:20, rate:20 },
     { name:'Sam Torres', role:'Audio Designer', dept:'AUDIO', hpw:10, rate:22 },
     { name:'Elena Mora', role:'QA Tester', dept:'QA', hpw:10, rate:15 }
+  ],
+  bugs: [
+    { date:'2025-02-15', sev:'HIGH', title:'Crash al salir del nivel 1', build:'0.3.2', repro:'Pausar → Quit en mitad de partida', assignee:'Dev 1', status:'WIP' },
+    { date:'2025-02-18', sev:'MED', title:'Audio se corta tras alt-tab', build:'0.3.2', repro:'Alt+tab durante gameplay', assignee:'Audio 1', status:'OPEN' },
+    { date:'2025-02-10', sev:'LOW', title:'Texto cortado en UI 4K', build:'0.3.1', repro:'Resolución 3840x2160', assignee:'Arte 1', status:'FIXED' }
+  ],
+  marketing: {
+    wishlist: [
+      { date:'2025-01-15', count:120 },
+      { date:'2025-02-01', count:340 },
+      { date:'2025-02-15', count:680 },
+      { date:'2025-03-01', count:1250 }
+    ],
+    reviews: [
+      { date:'2025-12-01', positive:0, negative:0, sales:0, refundPct:0 }
+    ],
+    press: [
+      { name:'IndieGameMag', type:'MEDIO', contact:'editor@indiegamemag.com', status:'TODO' },
+      { name:'@SteamSpyEs', type:'TWITTER', contact:'DM', status:'TODO' },
+      { name:'Northernlion', type:'STREAMER', contact:'business@nl.tv', status:'TODO' }
+    ],
+    roadmap: [
+      { name:'Patch 1.1 · Balance', type:'PATCH', date:'2026-01-15', status:'PLANNED' },
+      { name:'DLC · Modo cooperativo', type:'DLC', date:'2026-06-01', status:'PLANNED' }
+    ]
+  },
+  log: {
+    meetings: [
+      { date:'2025-02-10', title:'Sprint planning S3', attendees:'Equipo completo', decisions:'Priorizar IA enemigos antes que niveles extra.\nAjustar fecha alpha a 01-jun.', actions:'Dev 1: scaffolding IA esta semana' }
+    ],
+    activity: []
+  },
+  docs: [
+    { name:'Game Design Document', cat:'DESIGN', url:'https://drive.google.com/...', notes:'Doc maestro' },
+    { name:'Repositorio Git', cat:'CODE', url:'https://github.com/wildalchemists/hot-potato', notes:'Branch main' },
+    { name:'Art Bible', cat:'ART', url:'https://drive.google.com/...', notes:'Paleta + referencias' },
+    { name:'Steam Partner', cat:'BIZ', url:'https://partner.steamgames.com', notes:'Backend Steam' }
   ]
 };
 
-// ─── STATE ───────────────────────────────────
-let D = loadData();
+// ─── STATE / MULTI-PROJECT ───────────────────
+const PROJ_LIST_KEY = 'hp-console-projects-v2';
+const PROJ_CURRENT_KEY = 'hp-console-current-v2';
+const PROJ_DATA_PREFIX = 'hp-console-data-v2-';
+const LEGACY_KEY = 'hp-console-v1';
 
-function loadData() {
-  try {
-    const s = localStorage.getItem('hp-console-v1');
-    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULTS));
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+let projectList = []; // [{id, name}]
+let currentId = null;
+let D = null;
+
+function ensureFields(d) {
+  if(!d.bugs) d.bugs = [];
+  if(!d.marketing) d.marketing = {wishlist:[],reviews:[],press:[],roadmap:[]};
+  if(!d.marketing.wishlist) d.marketing.wishlist = [];
+  if(!d.marketing.reviews) d.marketing.reviews = [];
+  if(!d.marketing.press) d.marketing.press = [];
+  if(!d.marketing.roadmap) d.marketing.roadmap = [];
+  if(!d.log) d.log = {meetings:[],activity:[]};
+  if(!d.log.meetings) d.log.meetings = [];
+  if(!d.log.activity) d.log.activity = [];
+  if(!d.docs) d.docs = [];
+  if(!d.expenses) d.expenses = [];
+  return d;
 }
 
-function saveAll() {
+function uid() { return 'p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,6); }
+
+function bootProjects() {
+  try {
+    const raw = localStorage.getItem(PROJ_LIST_KEY);
+    projectList = raw ? JSON.parse(raw) : [];
+  } catch(e) { projectList = []; }
+  if(projectList.length === 0) {
+    // migrate legacy or seed default
+    const id = uid();
+    let seed = null;
+    try {
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if(legacy) seed = JSON.parse(legacy);
+    } catch(e) {}
+    seed = ensureFields(seed || JSON.parse(JSON.stringify(DEFAULTS)));
+    localStorage.setItem(PROJ_DATA_PREFIX+id, JSON.stringify(seed));
+    projectList = [{id, name: seed.project.name || 'Hot Potato'}];
+    localStorage.setItem(PROJ_LIST_KEY, JSON.stringify(projectList));
+    localStorage.setItem(PROJ_CURRENT_KEY, id);
+  }
+  currentId = localStorage.getItem(PROJ_CURRENT_KEY);
+  if(!currentId || !projectList.find(p=>p.id===currentId)) currentId = projectList[0].id;
+  loadProject(currentId);
+  renderProjectSwitcher();
+}
+
+function loadProject(id) {
+  try {
+    const raw = localStorage.getItem(PROJ_DATA_PREFIX+id);
+    D = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULTS));
+  } catch(e) { D = JSON.parse(JSON.stringify(DEFAULTS)); }
+  D = ensureFields(D);
+  currentId = id;
+  localStorage.setItem(PROJ_CURRENT_KEY, id);
+}
+
+function renderProjectSwitcher() {
+  const sel = document.getElementById('proj-switcher');
+  if(!sel) return;
+  sel.innerHTML = projectList.map(p=>`<option value="${p.id}" ${p.id===currentId?'selected':''}>${p.name}</option>`).join('')
+    + (projectList.length>1?'<option value="__del__">— Eliminar proyecto actual</option>':'');
+}
+
+function switchProject(id) {
+  if(id === '__del__') {
+    if(!confirm('¿Eliminar proyecto "'+(projectList.find(p=>p.id===currentId)?.name||'?')+'" definitivamente?')) {
+      renderProjectSwitcher(); return;
+    }
+    localStorage.removeItem(PROJ_DATA_PREFIX+currentId);
+    projectList = projectList.filter(p=>p.id!==currentId);
+    localStorage.setItem(PROJ_LIST_KEY, JSON.stringify(projectList));
+    currentId = projectList[0].id;
+    loadProject(currentId);
+    renderProjectSwitcher();
+    initDOM(); renderAll();
+    return;
+  }
+  loadProject(id);
+  renderProjectSwitcher();
+  initDOM(); renderAll();
+}
+
+function newProject() {
+  const name = prompt('Nombre del nuevo proyecto:', 'Nuevo proyecto');
+  if(!name) return;
+  const id = uid();
+  const fresh = ensureFields(JSON.parse(JSON.stringify(DEFAULTS)));
+  fresh.project.name = name;
+  localStorage.setItem(PROJ_DATA_PREFIX+id, JSON.stringify(fresh));
+  projectList.push({id, name});
+  localStorage.setItem(PROJ_LIST_KEY, JSON.stringify(projectList));
+  currentId = id; D = fresh;
+  localStorage.setItem(PROJ_CURRENT_KEY, id);
+  renderProjectSwitcher();
+  initDOM(); renderAll();
+  logActivity('Proyecto creado: '+name);
+}
+
+function saveAll(silent) {
   syncProjectFields();
   syncFinFields();
-  localStorage.setItem('hp-console-v1', JSON.stringify(D));
-  const btn = document.querySelector('.save-btn');
-  const orig = btn.textContent;
-  btn.textContent = '✓ GUARDADO';
-  btn.style.color = 'var(--green)';
-  btn.style.borderColor = 'var(--green)';
-  setTimeout(() => { btn.textContent = orig; btn.style.color=''; btn.style.borderColor=''; }, 1500);
+  // keep project list name in sync with proj-name input
+  const p = projectList.find(x=>x.id===currentId);
+  if(p && D.project.name) { p.name = D.project.name; localStorage.setItem(PROJ_LIST_KEY, JSON.stringify(projectList)); renderProjectSwitcher(); }
+  localStorage.setItem(PROJ_DATA_PREFIX+currentId, JSON.stringify(D));
+  if(!silent) {
+    const btn = document.querySelector('.save-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ GUARDADO';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color=''; btn.style.borderColor=''; }, 1500);
+  }
+  renderAll();
+}
+
+function logActivity(action) {
+  if(!D.log) D.log = {meetings:[],activity:[]};
+  D.log.activity.unshift({ ts: new Date().toISOString(), action });
+  if(D.log.activity.length > 200) D.log.activity = D.log.activity.slice(0,200);
+}
+
+// ─── EXPORT / IMPORT ─────────────────────────
+function exportJSON() {
+  syncProjectFields(); syncFinFields();
+  const payload = { version:2, exportedAt: new Date().toISOString(), project: D };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safe = (D.project.name||'project').replace(/[^a-z0-9]+/gi,'_').toLowerCase();
+  a.href = url; a.download = `hp-console-${safe}-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  logActivity('Exportado JSON');
+}
+
+function importJSON(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const data = parsed.project || parsed; // support raw or wrapped
+      if(!confirm('¿Importar y reemplazar datos del proyecto actual?')) { input.value=''; return; }
+      D = ensureFields(data);
+      localStorage.setItem(PROJ_DATA_PREFIX+currentId, JSON.stringify(D));
+      const p = projectList.find(x=>x.id===currentId);
+      if(p && D.project?.name) { p.name = D.project.name; localStorage.setItem(PROJ_LIST_KEY, JSON.stringify(projectList)); renderProjectSwitcher(); }
+      initDOM(); renderAll();
+      logActivity('Importado JSON: '+file.name);
+    } catch(err) { alert('Error al leer JSON: '+err.message); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ─── GLOBAL SEARCH ───────────────────────────
+let SEARCH = '';
+function applySearch(q) { SEARCH = (q||'').trim().toLowerCase(); renderAll(); }
+function matchSearch(...fields) {
+  if(!SEARCH) return true;
+  return fields.some(f => (f+'').toLowerCase().includes(SEARCH));
+}
+
+// ─── KEYBOARD SHORTCUTS ──────────────────────
+const TAB_KEYS = ['dashboard','financiero','produccion','bugs','presupuesto','equipo','calendario','marketing','log','docs'];
+document.addEventListener('keydown', (e) => {
+  if(e.ctrlKey && e.key.toLowerCase()==='s') { e.preventDefault(); saveAll(); return; }
+  if(e.ctrlKey && e.key.toLowerCase()==='e') { e.preventDefault(); exportJSON(); return; }
+  if(e.ctrlKey && e.key.toLowerCase()==='f') { e.preventDefault(); document.getElementById('global-search').focus(); return; }
+  if(e.key==='Escape') { const s=document.getElementById('global-search'); if(s){s.value='';applySearch('');s.blur();} return; }
+  const tag = (e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea'||tag==='select') return;
+  if(e.ctrlKey||e.altKey||e.metaKey) return;
+  if(/^[1-9]$/.test(e.key)) { const i=+e.key-1; if(TAB_KEYS[i]) activateTab(TAB_KEYS[i]); }
+  else if(e.key==='0') { activateTab(TAB_KEYS[9]); }
+});
+function activateTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id==='page-'+name));
   renderAll();
 }
 
@@ -883,9 +1305,18 @@ function renderProduccion() {
 
   // Tasks
   const tbody=document.getElementById('task-tbody'); tbody.innerHTML='';
-  let done=0, total=D.tasks.length;
+  const fDept=(document.getElementById('tk-f-dept')||{}).value||'';
+  const fSt=(document.getElementById('tk-f-status')||{}).value||'';
+  const fTxt=((document.getElementById('tk-f-text')||{}).value||'').toLowerCase();
+  let done=0, total=D.tasks.length, shown=0;
   D.tasks.forEach((t,i)=>{
     if(t.status==='DONE') done++;
+    if(fDept && t.dept!==fDept) return;
+    if(fSt && t.status!==fSt) return;
+    const blob=(t.name+' '+t.assignee).toLowerCase();
+    if(fTxt && !blob.includes(fTxt)) return;
+    if(!matchSearch(t.name,t.assignee,t.dept)) return;
+    shown++;
     const pct=t.est>0?Math.min(Math.round(t.actual/t.est*100),100):0;
     const dColor=DEPT_COLORS[t.dept]||'#8888AA';
     const tr=document.createElement('tr');
@@ -901,7 +1332,7 @@ function renderProduccion() {
       <td><button class="del-btn" onclick="D.tasks.splice(${i},1);renderAll()">✕</button></td>`;
     tbody.appendChild(tr);
   });
-  setText('task-summary', `${done}/${total} completadas`);
+  setText('task-summary', (shown<total?`${shown} mostradas · `:'')+`${done}/${total} completadas`);
 }
 
 // ─── RENDER PRESUPUESTO ───────────────────────
@@ -1126,9 +1557,32 @@ function renderDashboard() {
     teamBars.innerHTML+=`<div class="bar-row"><div class="bar-lbl">${m.name}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(p,.5)}%;background:${DEPT_COLORS[m.dept]||'#8888AA'};color:var(--bg);">${p>20?m.hpw+'h/sem':''}</div></div><div class="bar-amt">${m.hpw}h</div></div>`;
   });
 
+  // ── Health Score ──
+  // weights: tasks 25 · milestones 25 · budget 20 · schedule 15 · bugs 15
+  const taskScore = D.tasks.length>0 ? tasksDone/D.tasks.length*100 : 50;
+  const msTot = D.milestones.length, msDoneCount = D.milestones.filter(m=>m.done).length;
+  const overdueMs = D.milestones.filter(m=>!m.done && new Date(m.date)<new Date()).length;
+  const msScore = msTot>0 ? Math.max(0, (msDoneCount/msTot*100) - overdueMs*10) : 50;
+  const budScore = totalBud>0 ? Math.max(0, 100 - Math.max(0,(totalSpent/totalBud-1)*200)) : 100;
+  // schedule: how close task progress is to time progress (0 if way behind)
+  const timeProgress = totalDays>0 ? Math.min(100,((totalDays-Math.max(0,daysLeft))/totalDays)*100) : 0;
+  const schedScore = Math.max(0, 100 - Math.abs(timeProgress - tasksPct));
+  const openCrit = (D.bugs||[]).filter(b=>(b.sev==='CRIT'||b.sev==='HIGH')&&b.status!=='FIXED'&&b.status!=='WONTFIX').length;
+  const bugScore = Math.max(0, 100 - openCrit*15);
+  const health = Math.round(taskScore*.25 + msScore*.25 + budScore*.20 + schedScore*.15 + bugScore*.15);
+  const ring = document.getElementById('hr-fg');
+  const C = 2*Math.PI*38;
+  ring.style.strokeDasharray = C.toFixed(2);
+  ring.style.strokeDashoffset = (C * (1-health/100)).toFixed(2);
+  const hColor = health>=75?'var(--green)':health>=50?'var(--amber)':'var(--red)';
+  ring.style.stroke = hColor;
+  const hv=document.getElementById('hr-val'); hv.textContent=health; hv.style.color=hColor;
+  const hl=document.getElementById('hr-label'); hl.textContent = health>=85?'EXCELENTE':health>=70?'SALUDABLE':health>=50?'ATENCIÓN':health>=30?'EN RIESGO':'CRÍTICO';
+  hl.style.color = hColor;
+
   // Insight
   const beOK=c.beUnits<=c.units1;
-  document.getElementById('d-insight').innerHTML=`<strong>${D.project.name}</strong> · ${D.project.status} · <strong>${Math.max(0,daysLeft)} días</strong> para lanzamiento.<br>
+  document.getElementById('d-insight').innerHTML=`<strong>${D.project.name}</strong> · ${D.project.status} · <strong>${Math.max(0,daysLeft)} días</strong> para lanzamiento. <span class="tag" style="background:rgba(245,166,35,0.12);color:${hColor};">HEALTH ${health}/100</span><br>
     Producción al <strong>${tasksPct}%</strong> (${tasksDone}/${D.tasks.length} tareas). Presupuesto consumido: <strong>${budPct}%</strong> de ${fmt(totalBud,0)}.<br>
     Proyección revenue año 1: <strong class="${cc(c.ebitda1)}">${fmt(Math.round(c.netTotal))}</strong> · EBITDA: <strong class="${cc(c.ebitda1)}">${sgn(c.ebitda1,n=>fmt(Math.round(n)))}</strong> ·
     ${beOK?`<span class="tag tag-g">✓ BE AÑO 1</span>`:isFinite(c.beUnits)?`<span class="tag tag-r">✗ FALTAN ${fmtU(c.beUnits-c.units1)} UDS PARA BE</span>`:''}
@@ -1138,32 +1592,33 @@ function renderDashboard() {
 // ─── ADD HELPERS ─────────────────────────────
 function addMilestone() {
   D.milestones.push({name:'Nuevo hito',date:'2025-12-31',done:false});
-  renderAll();
+  logActivity('Hito añadido'); renderAll();
 }
 function addSprint() {
   const n=D.sprints.length+1;
   D.sprints.push({num:n,goal:'Objetivo sprint '+n,start:'2025-01-01',end:'2025-01-14',done:false});
-  renderAll();
+  logActivity('Sprint S'+n+' añadido'); renderAll();
 }
 function addTask() {
   D.tasks.push({dept:'CODE',name:'Nueva tarea',status:'TODO',assignee:'—',est:0,actual:0});
-  renderAll();
+  logActivity('Tarea añadida'); renderAll();
 }
 function addBudgetCat() {
   D.budget.push({cat:'Nueva categoría',budgeted:0,spent:0});
-  renderAll();
+  logActivity('Categoría de presupuesto añadida'); renderAll();
 }
 function addExpense() {
   const today=new Date().toISOString().split('T')[0];
   D.expenses.push({date:today,cat:'—',desc:'Nuevo gasto',amount:0});
-  renderAll();
+  logActivity('Gasto añadido'); renderAll();
 }
 function addTeamMember() {
   D.team.push({name:'Nuevo miembro',role:'—',dept:'CODE',hpw:20,rate:0});
-  renderAll();
+  logActivity('Miembro de equipo añadido'); renderAll();
 }
 function toggleMS(i) {
   D.milestones[i].done=!D.milestones[i].done;
+  logActivity((D.milestones[i].done?'✓ Hito completado: ':'↺ Hito reabierto: ')+D.milestones[i].name);
   renderAll();
 }
 
@@ -1179,17 +1634,250 @@ function setText(id,v) { const el=document.getElementById(id); if(el) el.textCon
   el.addEventListener('change',()=>{syncProjectFields();renderDashboard();renderCalendario();});
 });
 
+// ─── RENDER ALERTS BAR ───────────────────────
+function renderAlerts() {
+  const bar = document.getElementById('alerts-bar'); if(!bar) return;
+  const alerts = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const overdueMs = D.milestones.filter(m=>!m.done && new Date(m.date)<today).length;
+  if(overdueMs>0) alerts.push({lvl:'crit', txt:overdueMs+' hito'+(overdueMs>1?'s':'')+' vencido'+(overdueMs>1?'s':''), count:overdueMs});
+  const dueSoon = D.milestones.filter(m=>!m.done && daysUntil(m.date)>=0 && daysUntil(m.date)<=7).length;
+  if(dueSoon>0) alerts.push({lvl:'warn', txt:'hitos en ≤7 días', count:dueSoon});
+  let bud=0,sp=0; D.budget.forEach(b=>{bud+=b.budgeted;sp+=b.spent;});
+  if(bud>0 && sp/bud>1) alerts.push({lvl:'crit', txt:'presupuesto desbordado', count:Math.round((sp/bud-1)*100)+'%'});
+  else if(bud>0 && sp/bud>0.9) alerts.push({lvl:'warn', txt:'presupuesto >90%', count:Math.round(sp/bud*100)+'%'});
+  const critBugs = (D.bugs||[]).filter(b=>(b.sev==='CRIT'||b.sev==='HIGH') && b.status!=='FIXED' && b.status!=='WONTFIX').length;
+  if(critBugs>0) alerts.push({lvl:'crit', txt:'bugs críticos abiertos', count:critBugs});
+  const launchDays = daysUntil(D.project.launch);
+  if(launchDays<0) alerts.push({lvl:'crit', txt:'fecha lanzamiento pasada', count:Math.abs(launchDays)+'d'});
+  else if(launchDays<=30) alerts.push({lvl:'warn', txt:'lanzamiento próximo', count:launchDays+'d'});
+  const overdueTasks = D.tasks.filter(t=>t.status!=='DONE' && t.est>0 && t.actual>t.est*1.5).length;
+  if(overdueTasks>0) alerts.push({lvl:'warn', txt:'tareas >150% estimación', count:overdueTasks});
+
+  if(alerts.length===0) { bar.style.display='none'; return; }
+  bar.style.display='flex';
+  bar.innerHTML = '<span style="font-size:8px;letter-spacing:2.5px;color:var(--text2);">⚠ ALERTAS:</span>' +
+    alerts.map(a=>`<div class="alert-item ${a.lvl==='warn'?'warn':''}"><span class="ai-count">${a.count}</span><span>${a.txt}</span></div>`).join('');
+}
+
+// ─── RENDER BUGS ─────────────────────────────
+function renderBugs() {
+  const tbody = document.getElementById('bug-tbody'); if(!tbody) return;
+  const fSev = (document.getElementById('bug-f-sev')||{}).value||'';
+  const fSt  = (document.getElementById('bug-f-status')||{}).value||'';
+  const fTxt = ((document.getElementById('bug-f-text')||{}).value||'').toLowerCase();
+  tbody.innerHTML='';
+  let open=0, crit=0, fixed=0;
+  (D.bugs||[]).forEach((b,i)=>{
+    if(b.status!=='FIXED' && b.status!=='WONTFIX') open++;
+    if((b.sev==='CRIT'||b.sev==='HIGH') && b.status!=='FIXED' && b.status!=='WONTFIX') crit++;
+    if(b.status==='FIXED') fixed++;
+    if(fSev && b.sev!==fSev) return;
+    if(fSt && b.status!==fSt) return;
+    const blob = [b.title,b.assignee,b.build,b.repro].join(' ').toLowerCase();
+    if(fTxt && !blob.includes(fTxt)) return;
+    if(!matchSearch(b.title,b.assignee,b.build,b.repro)) return;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="date" style="background:transparent;border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;" value="${b.date||''}" onchange="D.bugs[${i}].date=this.value"></td>
+      <td><select class="sev sev-${b.sev}" style="border:none;outline:none;cursor:pointer;font-family:'JetBrains Mono',monospace;" onchange="D.bugs[${i}].sev=this.value;renderAll()">
+        ${['CRIT','HIGH','MED','LOW'].map(s=>`<option value="${s}" ${s===b.sev?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${b.title||''}" onchange="D.bugs[${i}].title=this.value"></td>
+      <td><input style="background:transparent;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:70px;text-align:right;" value="${b.build||''}" onchange="D.bugs[${i}].build=this.value"></td>
+      <td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${b.repro||''}" onchange="D.bugs[${i}].repro=this.value"></td>
+      <td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:90px;" value="${b.assignee||''}" onchange="D.bugs[${i}].assignee=this.value"></td>
+      <td><select style="background:transparent;border:none;outline:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:${b.status==='FIXED'?'var(--green)':b.status==='WIP'?'var(--blue)':b.status==='WONTFIX'?'var(--text3)':'var(--red)'};" onchange="D.bugs[${i}].status=this.value;renderAll()">
+        ${['OPEN','WIP','FIXED','WONTFIX'].map(s=>`<option value="${s}" ${s===b.status?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td><button class="del-btn" onclick="D.bugs.splice(${i},1);renderAll()">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+  const total = (D.bugs||[]).length;
+  setText('bug-open', open); setText('bug-crit', crit); setText('bug-fixed', fixed);
+  setText('bug-ratio', total>0?Math.round(fixed/total*100)+'%':'—');
+}
+
+['bug-f-sev','bug-f-status','bug-f-text'].forEach(id=>{
+  document.addEventListener('input', e=>{ if(e.target.id===id) renderBugs(); });
+  document.addEventListener('change', e=>{ if(e.target.id===id) renderBugs(); });
+});
+
+function addBug() {
+  D.bugs.unshift({date:new Date().toISOString().split('T')[0],sev:'MED',title:'Nuevo bug',build:'',repro:'',assignee:'—',status:'OPEN'});
+  logActivity('Bug creado'); renderAll();
+}
+
+// ─── RENDER MARKETING ────────────────────────
+function renderMarketing() {
+  const m = D.marketing;
+  // KPIs
+  const lastW = m.wishlist.length>0 ? m.wishlist[m.wishlist.length-1] : null;
+  const prevW = m.wishlist.length>1 ? m.wishlist[m.wishlist.length-2] : null;
+  setText('mk-wish', lastW?fmtU(lastW.count):'—');
+  setText('mk-wish-delta', (lastW&&prevW)?(`+${fmtU(lastW.count-prevW.count)} vs ant.`):'—');
+  const lastR = m.reviews.length>0?m.reviews[m.reviews.length-1]:null;
+  if(lastR){
+    const tot = lastR.positive+lastR.negative;
+    setText('mk-pos', tot>0?Math.round(lastR.positive/tot*100)+'%':'—');
+    setText('mk-pos-sub', tot>0?(lastR.positive+' / '+tot+' reseñas'):'sin reseñas');
+    setText('mk-sales', fmtU(lastR.sales||0));
+    setText('mk-refund', (lastR.refundPct||0)+'%');
+  } else { setText('mk-pos','—'); setText('mk-sales','—'); setText('mk-refund','—'); }
+
+  // Wishlist chart (simple SVG line)
+  const chart = document.getElementById('mk-wish-chart');
+  if(chart && m.wishlist.length>0) {
+    const w = 280, h = 100, pad = 24;
+    const counts = m.wishlist.map(p=>p.count);
+    const maxC = Math.max(...counts,1);
+    const minC = 0;
+    const pts = m.wishlist.map((p,i)=>{
+      const x = pad + (i/(Math.max(m.wishlist.length-1,1))) * (w-pad-8);
+      const y = h-pad - ((p.count-minC)/(maxC-minC||1)) * (h-pad-8);
+      return [x,y];
+    });
+    const path = pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+    const area = path + ` L${pts[pts.length-1][0].toFixed(1)},${(h-pad).toFixed(1)} L${pts[0][0].toFixed(1)},${(h-pad).toFixed(1)} Z`;
+    chart.innerHTML = `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:120px;">
+      <line x1="${pad}" y1="${h-pad}" x2="${w-4}" y2="${h-pad}" stroke="var(--border)" stroke-width="1"/>
+      <line x1="${pad}" y1="8" x2="${pad}" y2="${h-pad}" stroke="var(--border)" stroke-width="1"/>
+      <path d="${area}" fill="rgba(176,122,255,0.15)"/>
+      <path d="${path}" fill="none" stroke="var(--purple)" stroke-width="1.5"/>
+      ${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="var(--purple)"/>`).join('')}
+      <text x="${pad-3}" y="12" text-anchor="end" font-family="JetBrains Mono" font-size="8" fill="var(--text3)">${fmtU(maxC)}</text>
+      <text x="${pad-3}" y="${h-pad+3}" text-anchor="end" font-family="JetBrains Mono" font-size="8" fill="var(--text3)">0</text>
+    </svg>`;
+  } else if(chart) { chart.innerHTML='<div style="color:var(--text3);font-size:10px;padding:20px;text-align:center;">Sin datos · añade puntos abajo</div>'; }
+
+  // Wishlist table
+  const wtb = document.getElementById('wish-tbody'); wtb.innerHTML='';
+  m.wishlist.forEach((p,i)=>{
+    const prev = i>0?m.wishlist[i-1].count:0;
+    const delta = p.count-prev;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="date" style="background:transparent;border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;" value="${p.date||''}" onchange="D.marketing.wishlist[${i}].date=this.value;renderAll()"></td>
+      <td><input type="number" style="background:transparent;border:none;color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:70px;text-align:right;" value="${p.count}" onchange="D.marketing.wishlist[${i}].count=+this.value;renderAll()"></td>
+      <td class="${delta>=0?'c-green':'c-red'}">${delta>=0?'+':''}${fmtU(delta)}</td>
+      <td><button class="del-btn" onclick="D.marketing.wishlist.splice(${i},1);renderAll()">✕</button></td>`;
+    wtb.appendChild(tr);
+  });
+
+  // Reviews table
+  const rtb = document.getElementById('rev-tbody'); rtb.innerHTML='';
+  m.reviews.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="date" style="background:transparent;border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;" value="${r.date||''}" onchange="D.marketing.reviews[${i}].date=this.value;renderAll()"></td>
+      <td><input type="number" style="background:transparent;border:none;color:var(--green);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:60px;text-align:right;" value="${r.positive||0}" onchange="D.marketing.reviews[${i}].positive=+this.value;renderAll()"></td>
+      <td><input type="number" style="background:transparent;border:none;color:var(--red);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:60px;text-align:right;" value="${r.negative||0}" onchange="D.marketing.reviews[${i}].negative=+this.value;renderAll()"></td>
+      <td><input type="number" style="background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:70px;text-align:right;" value="${r.sales||0}" onchange="D.marketing.reviews[${i}].sales=+this.value;renderAll()"></td>
+      <td><input type="number" style="background:transparent;border:none;color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:50px;text-align:right;" value="${r.refundPct||0}" onchange="D.marketing.reviews[${i}].refundPct=+this.value;renderAll()"></td>
+      <td><button class="del-btn" onclick="D.marketing.reviews.splice(${i},1);renderAll()">✕</button></td>`;
+    rtb.appendChild(tr);
+  });
+
+  // Press table
+  const ptb = document.getElementById('press-tbody'); ptb.innerHTML='';
+  m.press.forEach((p,i)=>{
+    if(!matchSearch(p.name,p.contact,p.type)) return;
+    const stColor = p.status==='COVERED'?'var(--green)':p.status==='REPLIED'?'var(--blue)':p.status==='SENT'?'var(--amber)':'var(--text3)';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${p.name||''}" onchange="D.marketing.press[${i}].name=this.value"></td>
+      <td><select style="background:transparent;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;cursor:pointer;" onchange="D.marketing.press[${i}].type=this.value;renderAll()">
+        ${['MEDIO','STREAMER','YOUTUBER','TWITTER','PODCAST','INFLUENCER','OTROS'].map(t=>`<option value="${t}" ${t===p.type?'selected':''}>${t}</option>`).join('')}</select></td>
+      <td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${p.contact||''}" onchange="D.marketing.press[${i}].contact=this.value"></td>
+      <td><select style="background:transparent;border:none;outline:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:${stColor};" onchange="D.marketing.press[${i}].status=this.value;renderAll()">
+        ${['TODO','SENT','REPLIED','COVERED','DECLINED'].map(s=>`<option value="${s}" ${s===p.status?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td><button class="del-btn" onclick="D.marketing.press.splice(${i},1);renderAll()">✕</button></td>`;
+    ptb.appendChild(tr);
+  });
+
+  // Roadmap table
+  const rdb = document.getElementById('road-tbody'); rdb.innerHTML='';
+  m.roadmap.forEach((r,i)=>{
+    if(!matchSearch(r.name,r.type)) return;
+    const stColor = r.status==='DONE'?'var(--green)':r.status==='WIP'?'var(--blue)':'var(--text3)';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${r.name||''}" onchange="D.marketing.roadmap[${i}].name=this.value"></td>
+      <td><select style="background:transparent;border:none;color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;cursor:pointer;font-weight:700;" onchange="D.marketing.roadmap[${i}].type=this.value;renderAll()">
+        ${['PATCH','UPDATE','DLC','EVENT','PORT'].map(t=>`<option value="${t}" ${t===r.type?'selected':''}>${t}</option>`).join('')}</select></td>
+      <td><input type="date" style="background:transparent;border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;" value="${r.date||''}" onchange="D.marketing.roadmap[${i}].date=this.value;renderAll()"></td>
+      <td><select style="background:transparent;border:none;outline:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:${stColor};" onchange="D.marketing.roadmap[${i}].status=this.value;renderAll()">
+        ${['PLANNED','WIP','DONE','CANCELLED'].map(s=>`<option value="${s}" ${s===r.status?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td><button class="del-btn" onclick="D.marketing.roadmap.splice(${i},1);renderAll()">✕</button></td>`;
+    rdb.appendChild(tr);
+  });
+}
+function addWishPoint(){D.marketing.wishlist.push({date:new Date().toISOString().split('T')[0],count:0});logActivity('Wishlist · punto añadido');renderAll();}
+function addReviewPoint(){D.marketing.reviews.push({date:new Date().toISOString().split('T')[0],positive:0,negative:0,sales:0,refundPct:0});logActivity('Reseñas · punto añadido');renderAll();}
+function addPress(){D.marketing.press.push({name:'Nuevo contacto',type:'MEDIO',contact:'',status:'TODO'});logActivity('Press · contacto añadido');renderAll();}
+function addRoad(){D.marketing.roadmap.push({name:'Nueva entrada',type:'PATCH',date:'2026-01-01',status:'PLANNED'});logActivity('Roadmap · entrada añadida');renderAll();}
+
+// ─── RENDER LOG ──────────────────────────────
+function renderLog() {
+  const mList = document.getElementById('meet-list'); if(!mList) return;
+  mList.innerHTML='';
+  (D.log.meetings||[]).forEach((m,i)=>{
+    if(!matchSearch(m.title,m.attendees,m.decisions,m.actions)) return;
+    const div=document.createElement('div');
+    div.style.cssText='padding:8px 0;border-bottom:1px solid var(--border2);';
+    div.innerHTML=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+      <input type="date" style="background:transparent;border:none;color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;font-weight:700;" value="${m.date||''}" onchange="D.log.meetings[${i}].date=this.value">
+      <input style="flex:1;background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;font-weight:700;" value="${m.title||''}" onchange="D.log.meetings[${i}].title=this.value">
+      <button class="del-btn" onclick="D.log.meetings.splice(${i},1);renderAll()">✕</button></div>
+      <div style="margin-bottom:4px;"><span style="font-size:8px;letter-spacing:1.5px;color:var(--text3);">ASISTENTES:</span>
+        <input style="background:transparent;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:calc(100% - 90px);margin-left:6px;" value="${m.attendees||''}" onchange="D.log.meetings[${i}].attendees=this.value"></div>
+      <div style="margin-bottom:4px;"><span style="font-size:8px;letter-spacing:1.5px;color:var(--text3);display:block;margin-bottom:2px;">DECISIONES:</span>
+        <textarea style="width:100%;background:var(--bg4);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 6px;border-radius:2px;outline:none;resize:vertical;min-height:40px;" onchange="D.log.meetings[${i}].decisions=this.value">${m.decisions||''}</textarea></div>
+      <div><span style="font-size:8px;letter-spacing:1.5px;color:var(--text3);display:block;margin-bottom:2px;">ACTION ITEMS:</span>
+        <textarea style="width:100%;background:var(--bg4);border:1px solid var(--border);color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 6px;border-radius:2px;outline:none;resize:vertical;min-height:32px;" onchange="D.log.meetings[${i}].actions=this.value">${m.actions||''}</textarea></div>`;
+    mList.appendChild(div);
+  });
+
+  const aList = document.getElementById('activity-list'); aList.innerHTML='';
+  if((D.log.activity||[]).length===0){aList.innerHTML='<div style="color:var(--text3);font-size:10px;padding:8px;">Sin actividad registrada.</div>';}
+  else (D.log.activity||[]).forEach(a=>{
+    if(!matchSearch(a.action)) return;
+    const d = new Date(a.ts);
+    aList.innerHTML+=`<div style="display:flex;gap:8px;padding:4px 0;border-bottom:1px solid var(--border2);font-size:10px;">
+      <span style="color:var(--text3);font-size:9px;width:120px;flex-shrink:0;">${d.toLocaleString('es-ES',{month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
+      <span style="color:var(--text2);">${a.action}</span></div>`;
+  });
+}
+function addMeeting(){D.log.meetings.unshift({date:new Date().toISOString().split('T')[0],title:'Nueva reunión',attendees:'',decisions:'',actions:''});logActivity('Reunión añadida');renderAll();}
+
+// ─── RENDER DOCS ─────────────────────────────
+function renderDocs() {
+  const tb = document.getElementById('docs-tbody'); if(!tb) return;
+  tb.innerHTML='';
+  (D.docs||[]).forEach((d,i)=>{
+    if(!matchSearch(d.name,d.url,d.cat,d.notes)) return;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${d.name||''}" onchange="D.docs[${i}].name=this.value"></td>
+      <td><input style="background:transparent;border:none;color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:9px;outline:none;width:80px;font-weight:700;" value="${d.cat||''}" onchange="D.docs[${i}].cat=this.value"></td>
+      <td style="text-align:left;"><a href="${d.url||'#'}" target="_blank" style="color:var(--blue);font-size:10px;text-decoration:none;display:inline-block;margin-right:6px;" title="Abrir">↗</a>
+        <input style="background:transparent;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:calc(100% - 20px);" value="${d.url||''}" onchange="D.docs[${i}].url=this.value;renderAll()"></td>
+      <td style="text-align:left;"><input style="background:transparent;border:none;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;width:100%;" value="${d.notes||''}" onchange="D.docs[${i}].notes=this.value"></td>
+      <td><button class="del-btn" onclick="D.docs.splice(${i},1);renderAll()">✕</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function addDoc(){D.docs.push({name:'Nuevo enlace',cat:'OTROS',url:'https://',notes:''});logActivity('Doc añadido');renderAll();}
+
 // ─── RENDER ALL ───────────────────────────────
 function renderAll() {
+  renderAlerts();
   renderDashboard();
   renderFin();
   renderProduccion();
+  renderBugs();
   renderPresupuesto();
   renderEquipo();
   renderCalendario();
+  renderMarketing();
+  renderLog();
+  renderDocs();
 }
 
 // ─── BOOT ─────────────────────────────────────
+bootProjects();
 initDOM();
 renderAll();
 </script>
